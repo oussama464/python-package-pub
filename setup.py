@@ -5,7 +5,11 @@ with open("README.md") as f:
 
 setup(
     name="animalsounds",  # How you named your package folder (TSIClient)
-    packages=["animalsounds"],  # Chose the same as "name"
+    packages=find_packages(
+        where="animalsounds", exclude=("tests*", "testing*")
+    ),  # Chose the same as "name"
+    package_dir={"": "animalsounds"},
+    include_package_data=True,
     version="1.0.0",  # Start with a small number and increase it with every change you make
     license="MIT",  # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     long_description=long_description,
