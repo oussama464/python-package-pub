@@ -1,0 +1,5 @@
+pip
+pytest
+wheel
+twine
+setuptools
