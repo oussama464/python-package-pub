@@ -17,7 +17,7 @@ default: clean dev_deps deps test lint build
 clean: clean-build clean-pyc clean-test
 
 clean-build:
-	rm -fr dist/ build/ *.egg-info
+	rm -fr dist/ build/ **/*.egg-info
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +

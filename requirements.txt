@@ -3,3 +3,5 @@ pytest
 wheel
 twine
 setuptools
+keyring
+artifacts-keyring
