@@ -47,7 +47,7 @@ stages:
           - task: ArchiveFiles@2
             displayName: "Archive files"
             inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/dist"
               includeRootFolder: false
               archiveType: zip
               archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
@@ -55,4 +55,31 @@ stages:
 
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
             displayName: "publish artifact"
-            artifact: drop
+            artifact: dist
+  - stage: Deploy
+    displayName: Deploy
+    dependsOn: Archive
+    condition: succeeded()
+    jobs:
+      - job: publish
+        displayName: publish package
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          matrix:
+            Python38:
+              python.version: "3.8"
+        steps:
+          - task: TwineAuthenticate@1
+            displayName: "Twine Authenticate "
+            inputs:
+              artifactFeed: "Feature Rich Epic/demofeed"
+          - script: |
+
+              python -m pip install --upgrade pip
+              python -m pip install --upgrade twine wheel
+
+              unzip -l $(Pipeline.Workspace)/dist/$(Build.BuildId).zip
+              unzip -l $(Pipeline.Workspace)/dist/$(Build.BuildId).zip
+              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/dist/$(Build.BuildId)/*
+            displayName: "twine upload artifact to feed"
