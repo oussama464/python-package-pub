@@ -20,21 +20,11 @@ steps:
     displayName: "Use Python $(python.version)"
   - script: |
       python -m pip install --upgrade pip
+      python -m pip install --upgrade build setuptools
     displayName: "Install dependencies"
   - script: |
-      python setup.py sdist
+      python -m build
     displayName: "Artifact Creation"
   - script: |
-      tar --list -f dist/*.tar.gz
+      unzip -l dist/*.whl && tar --list -f dist/*.tar.gz
     displayName: "Display build files"
-
-  - task: CopyFiles@2
-    inputs:
-      Contents: "**/dist/*.tar.gz"
-      TargetFolder: "$(build.artifactstagingdirectory)"
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-      ArtifactName: "dist"
-      publishLocation: "Container"
