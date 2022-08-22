@@ -44,46 +44,15 @@ stages:
               echo $(System.ArtifactsDirectory)
               ls -al $(System.ArtifactsDirectory)
             displayName: "Display build files"
-          - task: CopyFiles@2
+          - task: ArchiveFiles@2
+            displayName: "Archive files"
             inputs:
-              Contents: "**/dist/*"
-              TargetFolder: "$(build.artifactstagingdirectory)"
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+              replaceExistingArchive: true
 
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-              ArtifactName: "dist"
-              publishLocation: "Container"
-
-  - stage: Deploy
-    displayName: Deploy
-    dependsOn: Archive
-    condition: succeeded()
-    jobs:
-      - job: publish
-        displayName: publish package
-        pool:
-          vmImage: $(vmImageName)
-        strategy:
-          matrix:
-            Python38:
-              python.version: "3.8"
-        steps:
-          - task: TwineAuthenticate@1
-            displayName: "Twine Authenticate "
-            inputs:
-              artifactFeed: "Feature Rich Epic/demofeed"
-          - script: |
-              echo showing files in $(System.DefaultWorkingDirectory)
-              ls -al $(System.DefaultWorkingDirectory)
-
-              ls -al $(Pipeline.Workspace)
-              ls -al $(Build.ArtifactStagingDirectory)
-              ls -al $(Build.ArtifactStagingDirectory)
-
-              python -m pip install --upgrade pip
-              python -m pip install --upgrade twine wheel
-
-
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(System.DefaultWorkingDirectory)/dist/*
-            displayName: "twine upload artifact to feed"
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            displayName: "publish artifact"
+            artifact: drop
