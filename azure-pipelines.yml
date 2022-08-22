@@ -73,5 +73,6 @@ stages:
               artifactFeed: "Feature Rich Epic/demofeed"
           - script: |
               pip install twine wheel
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/$(Build.BuildId)/dist/dist/*
+              ls $(Build.ArtifactStagingDirectory)
+              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/$(Build.BuildId)/dist/dist/
             displayName: "twine upload artifact to feed"
