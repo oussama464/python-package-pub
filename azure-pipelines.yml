@@ -40,9 +40,9 @@ stages:
               echo $(System.DefaultWorkingDirectory)/$(Build.BuildId)
               ls $(System.DefaultWorkingDirectory)
               echo $(Build.ArtifactStagingDirectory)
-              ls $(Build.ArtifactStagingDirectory)
+              ls -al $(Build.ArtifactStagingDirectory)
               echo $(System.ArtifactsDirectory)
-              ls $(System.ArtifactsDirectory)
+              ls -al $(System.ArtifactsDirectory)
             displayName: "Display build files"
           - task: CopyFiles@2
             inputs:
@@ -75,9 +75,10 @@ stages:
               artifactFeed: "Feature Rich Epic/demofeed"
           - script: |
               ls -al $(Pipeline.Workspace)
+              ls -al $(Build.ArtifactStagingDirectory)
               python -m pip install --upgrade pip
               python -m pip install --upgrade twine wheel
-              ls $(Build.ArtifactStagingDirectory)
+              ls -al $(Build.ArtifactStagingDirectory)
 
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/dist/dist/*
+              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/a/dist/dist/*
             displayName: "twine upload artifact to feed"
