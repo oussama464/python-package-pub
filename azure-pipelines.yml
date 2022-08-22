@@ -37,7 +37,7 @@ stages:
             displayName: "Artifact Creation"
           - script: |
               unzip -l dist/*.whl && tar --list -f dist/*.tar.gz
-              echo $(System.DefaultWorkingDirectory)
+              echo $(System.DefaultWorkingDirectory)/$(Build.BuildId)
               ls $(System.DefaultWorkingDirectory)
               echo $(Build.ArtifactStagingDirectory)
               ls $(Build.ArtifactStagingDirectory)
@@ -71,3 +71,7 @@ stages:
             displayName: "Twine Authenticate "
             inputs:
               artifactFeed: "Feature Rich Epic/demofeed"
+          - script: |
+              pip install twine wheel
+              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/$(Build.BuildId)/dist/dist/*
+            displayName: "twine upload artifact to feed"
