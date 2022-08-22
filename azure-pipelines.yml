@@ -5,36 +5,69 @@
 
 trigger:
   - master
+variables:
+  # Agent VM image name
+  vmImageName: "ubuntu-latest"
 
-pool:
-  vmImage: ubuntu-latest
-strategy:
-  matrix:
-    Python38:
-      python.version: "3.8"
+stages:
+  - stage: Archive
+    displayName: Archive stage
+    jobs:
+      - job: build
+        displayName: Build
 
-steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: "$(python.version)"
-    displayName: "Use Python $(python.version)"
-  - script: |
-      python -m pip install --upgrade pip
-      python -m pip install --upgrade build setuptools
-    displayName: "Install dependencies"
-  - script: |
-      python -m build
-    displayName: "Artifact Creation"
-  - script: |
-      unzip -l dist/*.whl && tar --list -f dist/*.tar.gz
-    displayName: "Display build files"
-  - task: CopyFiles@2
-    inputs:
-      Contents: "**/dist/*"
-      TargetFolder: "$(build.artifactstagingdirectory)"
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          matrix:
+            Python38:
+              python.version: "3.8"
 
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-      ArtifactName: "dist"
-      publishLocation: "Container"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(python.version)"
+            displayName: "Use Python $(python.version)"
+          - script: |
+              python -m pip install --upgrade pip
+              python -m pip install --upgrade build setuptools
+            displayName: "Install dependencies"
+          - script: |
+              python -m build
+            displayName: "Artifact Creation"
+          - script: |
+              unzip -l dist/*.whl && tar --list -f dist/*.tar.gz
+              echo $(System.DefaultWorkingDirectory)
+              ls $(System.DefaultWorkingDirectory)
+              echo $(Build.ArtifactStagingDirectory)
+              ls $(Build.ArtifactStagingDirectory)
+            displayName: "Display build files"
+          - task: CopyFiles@2
+            inputs:
+              Contents: "**/dist/*"
+              TargetFolder: "$(build.artifactstagingdirectory)"
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "dist"
+              publishLocation: "Container"
+
+  - stage: Deploy
+    displayName: Deploy
+    dependsOn: Archive
+    condition: succeeded()
+    jobs:
+      - job: publish
+        displayName: publish package
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          matrix:
+            Python38:
+              python.version: "3.8"
+        steps:
+          - task: TwineAuthenticate@1
+            displayName: "Twine Authenticate "
+            inputs:
+              artifactFeed: "Feature Rich Epic/demofeed"
