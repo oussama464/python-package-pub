@@ -30,7 +30,7 @@ stages:
             displayName: "Use Python $(python.version)"
           - script: |
               python -m pip install --upgrade pip
-              python -m pip install --upgrade build setuptools
+              python -m pip install --upgrade build setuptools twine wheel
             displayName: "Install dependencies"
           - script: |
               python -m build
@@ -56,29 +56,15 @@ stages:
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
             displayName: "publish artifact"
             artifact: dist
-  - stage: Deploy
-    displayName: Deploy
-    dependsOn: Archive
-    condition: succeeded()
-    jobs:
+
       - job: publish
         displayName: publish package
-        pool:
-          vmImage: $(vmImageName)
-        strategy:
-          matrix:
-            Python38:
-              python.version: "3.8"
         steps:
           - task: TwineAuthenticate@1
             displayName: "Twine Authenticate "
             inputs:
               artifactFeed: "Feature Rich Epic/demofeed"
           - script: |
-
-              python -m pip install --upgrade pip
-              python -m pip install --upgrade twine wheel
-
               unzip -l $(Pipeline.Workspace)/dist/$(Build.BuildId).zip
               unzip -l $(Pipeline.Workspace)/dist/$(Build.BuildId).zip
               python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/dist/$(Build.BuildId)/*
