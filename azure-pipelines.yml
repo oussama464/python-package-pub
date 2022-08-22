@@ -60,5 +60,5 @@ stages:
               artifactFeed: "Feature Rich Epic/demofeed"
           - script: |
 
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/dist/*
+              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) dist/*
             displayName: "twine upload artifact to feed"
