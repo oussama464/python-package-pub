@@ -80,5 +80,5 @@ stages:
               python -m pip install --upgrade twine wheel
               ls -al $(Build.ArtifactStagingDirectory)
 
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/a/dist/dist/*
+              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(System.DefaultWorkingDirectory)/dist/*
             displayName: "twine upload artifact to feed"
