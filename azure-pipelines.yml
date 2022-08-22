@@ -41,6 +41,8 @@ stages:
               ls $(System.DefaultWorkingDirectory)
               echo $(Build.ArtifactStagingDirectory)
               ls $(Build.ArtifactStagingDirectory)
+              echo $(System.ArtifactsDirectory)
+              ls $(System.ArtifactsDirectory)
             displayName: "Display build files"
           - task: CopyFiles@2
             inputs:
@@ -75,6 +77,5 @@ stages:
               python -m pip install --upgrade pip
               python -m pip install --upgrade twine wheel
               ls $(Build.ArtifactStagingDirectory)
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/**/*.whl
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/**/*.tar.gz
+              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) $(System.ArtifactsDirectory)/dist/dist/*
             displayName: "twine upload artifact to feed"
