@@ -28,3 +28,13 @@ steps:
   - script: |
       unzip -l dist/*.whl && tar --list -f dist/*.tar.gz
     displayName: "Display build files"
+  - task: CopyFiles@2
+    inputs:
+      Contents: "**/dist/*"
+      TargetFolder: "$(build.artifactstagingdirectory)"
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      ArtifactName: "dist"
+      publishLocation: "Container"
