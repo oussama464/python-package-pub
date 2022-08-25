@@ -54,11 +54,3 @@ stages:
               PathtoPublish: "$(Build.ArtifactStagingDirectory)"
               ArtifactName: "dist"
               publishLocation: "Container"
-          - task: TwineAuthenticate@1
-            displayName: "Twine Authenticate "
-            inputs:
-              artifactFeed: "Feature Rich Epic/demofeed"
-          - script: |
-
-              python -m twine upload -r "demofeed" --config-file $(PYPIRC_PATH) dist/*
-            displayName: "twine upload artifact to feed"

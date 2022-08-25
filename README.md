@@ -14,3 +14,4 @@
 └── setup.py
 
 ```
+[![Build Status](https://dev.azure.com/oussamamissaoui201/Feature%20Rich%20Epic/_apis/build/status/oussama464.python-package-pub?branchName=master)](https://dev.azure.com/oussamamissaoui201/Feature%20Rich%20Epic/_build/latest?definitionId=7&branchName=master)
