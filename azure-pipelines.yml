@@ -54,3 +54,13 @@ stages:
               PathtoPublish: "$(Build.ArtifactStagingDirectory)"
               ArtifactName: "dist"
               publishLocation: "Container"
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: 'codesacan'
+              scannerMode: 'CLI'
+              configMode: 'file'
+          - task: SonarQubeAnalyze@5
+          - task: SonarQubePublish@5
+            inputs:
+              pollingTimeoutSec: '300'
+
