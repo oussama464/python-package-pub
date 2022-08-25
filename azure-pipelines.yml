@@ -28,11 +28,6 @@ stages:
             inputs:
               versionSpec: "$(python.version)"
             displayName: "Use Python $(python.version)"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-              ArtifactName: "dist"
-              publishLocation: "Container"
           - task: SonarQubePrepare@5
             inputs:
               SonarQube: "miss"
