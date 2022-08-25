@@ -35,11 +35,12 @@ stages:
               publishLocation: "Container"
           - task: SonarQubePrepare@5
             inputs:
-              SonarQube: "codesacan"
-              scannerMode: "CLI"
-              configMode: "manual"
-              cliProjectKey: "miss"
-              cliSources: "."
+              SonarQube: 'miss'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliProjectKey: 'miss'
+              cliSources: '.'
+
           - task: SonarQubeAnalyze@5
           - task: SonarQubePublish@5
             inputs:
