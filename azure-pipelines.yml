@@ -28,6 +28,23 @@ stages:
             inputs:
               versionSpec: "$(python.version)"
             displayName: "Use Python $(python.version)"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "dist"
+              publishLocation: "Container"
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: "codesacan"
+              scannerMode: "CLI"
+              configMode: "manual"
+              cliProjectKey: "miss"
+              cliSources: "."
+          - task: SonarQubeAnalyze@5
+          - task: SonarQubePublish@5
+            inputs:
+              pollingTimeoutSec: "300"
+
           - script: |
               python -m pip install --upgrade pip
               python -m pip install --upgrade build setuptools twine wheel
@@ -48,9 +65,3 @@ stages:
             inputs:
               Contents: "**/dist/*"
               TargetFolder: "$(build.artifactstagingdirectory)"
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-              ArtifactName: "dist"
-              publishLocation: "Container"
